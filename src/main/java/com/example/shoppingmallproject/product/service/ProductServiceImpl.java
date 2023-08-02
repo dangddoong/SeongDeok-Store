@@ -1,12 +1,18 @@
 package com.example.shoppingmallproject.product.service;
 
+import com.example.shoppingmallproject.order.dto.OrderDetailsDto;
+import com.example.shoppingmallproject.order.dto.OrderRequestDto;
 import com.example.shoppingmallproject.product.dto.ProductRequestDto;
 import com.example.shoppingmallproject.product.dto.ProductResponseDto;
 import com.example.shoppingmallproject.product.entity.Product;
 import com.example.shoppingmallproject.product.repository.ProductRepository;
 import com.example.shoppingmallproject.seller.entity.Seller;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -79,9 +85,25 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.getMyProducts(seller.getId());
     }
 
-    @Transactional(readOnly = true)
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     @Override
-    public List<Product> getProductsByIds(List<Long> productIds) {
-        return productRepository.findAllByIdIn(productIds);
+    public List<Product> getProductsByIds(OrderRequestDto dto, List<Long> productIds) {
+        List<Product> products = productRepository.findAllByIdIn(productIds);
+        Map<Long, Product> productMap = products.stream()
+            .collect(Collectors.toMap(Product::getId, Function.identity()));
+        reduceProductsStock(dto.getOrderDetailsDtos(), productMap);
+        return products;
+    }
+    @Transactional
+    public void reduceProductsStock(List<OrderDetailsDto> orderDetailsDtos,
+        Map<Long, Product> productMap){
+        for (OrderDetailsDto detailsDto: orderDetailsDtos){
+            Product product = productMap.get(detailsDto.getProductId());
+//            product.reduceStock(detailsDto.getQuantity());
+            if(!productRepository.reduceStockAndCheckAvailability(detailsDto.getQuantity(), product.getId())){
+                throw new RuntimeException();
+            };
+        }
     }
 }

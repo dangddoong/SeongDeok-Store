@@ -71,14 +71,18 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.mockito:mockito-core:5.3.1'
     testImplementation 'com.google.code.gson:gson:2.10.1'
+    // JUnit5
+    testImplementation("org.junit.platform:junit-platform-launcher:1.5.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
 
     //test for redis with docker-container
     testImplementation "org.testcontainers:testcontainers:1.17.6"
 
     // test 환경용 h2
     testImplementation "com.h2database:h2"
+
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
+
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
+

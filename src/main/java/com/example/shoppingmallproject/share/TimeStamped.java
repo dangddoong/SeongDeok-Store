@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@EnableJpaAuditing
 public class TimeStamped {
     @CreatedDate
     @Column(updatable = false)

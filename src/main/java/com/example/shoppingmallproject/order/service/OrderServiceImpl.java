@@ -12,6 +12,8 @@ import com.example.shoppingmallproject.orderProduct.service.OrderProductService;
 import com.example.shoppingmallproject.product.entity.Product;
 import com.example.shoppingmallproject.product.service.ProductService;
 import com.example.shoppingmallproject.user.entity.User;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,10 +34,10 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional
     public Long createOrder(OrderRequestDto dto, User user) {
-        List<Product> products = productService.getProductsByIds(dto.getProductIds());
+        List<Product> products = productService.getProductsByIds(dto, dto.getProductIds());
         Map<Long, Product> productMap = products.stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
-        reduceProductsStock(dto.getOrderDetailsDtos(), productMap);
+//        reduceProductsStock(dto.getOrderDetailsDtos(), productMap);
         Order order = Order.builder()
                 .user(user)
                 .totalPrice(calculateTotalPrice(dto.getOrderDetailsDtos(), productMap))
@@ -70,7 +72,8 @@ public class OrderServiceImpl implements OrderService{
         }
     }
 
-    private void reduceProductsStock(List<OrderDetailsDto> orderDetailsDtos, Map<Long, Product> productMap){
+    public void reduceProductsStock(List<OrderDetailsDto> orderDetailsDtos,
+        Map<Long, Product> productMap){
         for (OrderDetailsDto detailsDto: orderDetailsDtos){
             Product product = productMap.get(detailsDto.getProductId());
             product.reduceStock(detailsDto.getQuantity());
