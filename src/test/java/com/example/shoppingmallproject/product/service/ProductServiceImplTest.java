@@ -4,6 +4,9 @@ import com.example.shoppingmallproject.product.dto.ProductRequestDto;
 import com.example.shoppingmallproject.product.entity.Product;
 import com.example.shoppingmallproject.product.repository.ProductRepository;
 import com.example.shoppingmallproject.seller.entity.Seller;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -80,7 +83,26 @@ class ProductServiceImplTest {
 
 
     @Test
-    void getSellersProductsTest(){
-
+    void 멀티스레드_동시성_테스트() throws InterruptedException {
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
+        CountDownLatch countDownLatch = new CountDownLatch(20);
+        var b = new Object() {
+            int a = 1;
+        };
+        for (int i = 0; i < 20; i++) {
+            executorService.submit(() -> {
+                try {
+                    System.out.println(b.a);
+                    System.out.println(Thread.currentThread().getName());
+                    System.out.println("--------------------------");
+                    b.a = b.a + 1;
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        countDownLatch.await();
+        System.out.println(b.a);
+        System.out.println(Thread.currentThread().getName());
     }
 }
