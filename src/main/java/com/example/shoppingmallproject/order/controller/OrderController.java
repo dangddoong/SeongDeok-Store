@@ -3,6 +3,7 @@ package com.example.shoppingmallproject.order.controller;
 import com.example.shoppingmallproject.common.security.userDetails.entity.UserDetailsImpl;
 import com.example.shoppingmallproject.order.dto.OrderRequestDto;
 import com.example.shoppingmallproject.order.dto.OrderResponseDto;
+import com.example.shoppingmallproject.order.service.OrderFacade;
 import com.example.shoppingmallproject.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,11 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderFacade orderFacade;
 
     @PostMapping("/orders")
     public ResponseEntity<Long> createOrder(@RequestBody OrderRequestDto dto,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails){
-        Long orderId = orderService.createOrder(dto, userDetails.getUser());
+        Long orderId = orderFacade.createOrderWithDistributedLock(dto, userDetails.getUser());
         return ResponseEntity.status(HttpStatus.CREATED).body(orderId);
     }
 
