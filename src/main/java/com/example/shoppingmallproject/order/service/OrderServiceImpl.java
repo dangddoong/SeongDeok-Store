@@ -10,6 +10,7 @@ import com.example.shoppingmallproject.order.repository.OrderRepository;
 import com.example.shoppingmallproject.orderProduct.dto.OrderProductResponseDto;
 import com.example.shoppingmallproject.orderProduct.service.OrderProductService;
 import com.example.shoppingmallproject.product.entity.Product;
+import com.example.shoppingmallproject.product.repository.ProductRepository;
 import com.example.shoppingmallproject.product.service.ProductService;
 import com.example.shoppingmallproject.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class OrderServiceImpl implements OrderService{
     private final OrderRepository orderRepository;
     private final OrderProductService orderProductService;
     private final ProductService productService;
+    private final ProductRepository productRepository;
 
     @Override
     @Transactional
@@ -70,10 +72,16 @@ public class OrderServiceImpl implements OrderService{
         }
     }
 
+
     private void reduceProductsStock(List<OrderDetailsDto> orderDetailsDtos, Map<Long, Product> productMap){
         for (OrderDetailsDto detailsDto: orderDetailsDtos){
             Product product = productMap.get(detailsDto.getProductId());
-            product.reduceStock(detailsDto.getQuantity());
+//            product.reduceStock(detailsDto.getQuantity());
+            int i = productRepository.reduceStock(detailsDto.getQuantity(), product.getId());
+            if ( i != 1){
+                System.out.println("i is " + i);
+                throw new RuntimeException();
+            }
         }
     }
 }
