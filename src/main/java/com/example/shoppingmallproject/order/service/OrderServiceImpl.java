@@ -15,6 +15,7 @@ import com.example.shoppingmallproject.product.service.ProductService;
 import com.example.shoppingmallproject.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -72,8 +73,10 @@ public class OrderServiceImpl implements OrderService{
         }
     }
 
-
-    private void reduceProductsStock(List<OrderDetailsDto> orderDetailsDtos, Map<Long, Product> productMap){
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    @Transactional
+    public void reduceProductsStock(List<OrderDetailsDto> orderDetailsDtos,
+        Map<Long, Product> productMap){
         for (OrderDetailsDto detailsDto: orderDetailsDtos){
             Product product = productMap.get(detailsDto.getProductId());
 //            product.reduceStock(detailsDto.getQuantity());

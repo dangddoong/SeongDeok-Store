@@ -23,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
@@ -58,7 +60,7 @@ public class OrderConcurrencyTestThree {
         .phone("Phone")
         .build();
     sellerRepository.save(seller);
-    Long stock = 1500L;
+    Long stock = 3002L;
     Product product1 = Product.builder()
         .price(100L)
         .detail("detail")
@@ -80,6 +82,7 @@ public class OrderConcurrencyTestThree {
     OrderDetailsDto detailsDto2 = new OrderDetailsDto(product2.getId(), 1L);
     List<OrderDetailsDto> detailsDtos = new ArrayList<>();
     detailsDtos.add(detailsDto1);
+    detailsDtos.add(detailsDto2);
     List<OrderDetailsDto> detailsDtos2 = new ArrayList<>();
     detailsDtos2.add(detailsDto2);
     orderRequestDto = new OrderRequestDto(detailsDtos);
@@ -99,7 +102,7 @@ public class OrderConcurrencyTestThree {
         try {
           long beforeTime = System.currentTimeMillis();
           orderService.createOrder(orderRequestDto, user);
-          System.out.println(System.currentTimeMillis() - beforeTime);
+          System.out.println("p12: " + (System.currentTimeMillis() - beforeTime));
         } finally {
           countDownLatch.countDown();
         }
@@ -110,7 +113,7 @@ public class OrderConcurrencyTestThree {
         try {
           long beforeTime = System.currentTimeMillis();
           orderService.createOrder(orderRequestDto2, user);
-          System.out.println(System.currentTimeMillis() - beforeTime);
+          System.out.println("p2: " + (System.currentTimeMillis() - beforeTime));
         } finally {
           countDownLatch.countDown();
         }
