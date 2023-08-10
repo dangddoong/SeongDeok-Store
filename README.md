@@ -1,41 +1,5 @@
 # 🛒성덕마켓🛒
-
-## ⚙️ 개발환경
-
----
-
-- Intellij
-- Postman
-- GitHub
-- Notion
-
-
-## 💻 기술스택
-
---- 
-### 프론트엔드
-
-- 
-
-
-### 백엔드
-
-#### Spring Boot
-- Java 17
-- Spring Data JPA
-- Spring Boot Security
-- Spring Boot Batch
-
-#### Build tool
-- Gradle
-
-#### Database
-- Mysql
-- Redis
-
-#### Message Queue
-- Kafka
-
+해당 프로젝트는 [Tenverse - ShoppingMall](https://github.com/tenverse/ToyProject-ShoppingMall)에서 분기한 프로젝트입니다. 
 
 
 #  ✏️ 코드컨벤션
@@ -58,15 +22,4 @@
  | Docs: | 문서를 수정한 경우                                              |
 
 
-# 📝 개발 기록
 
----
-
-- 2023.07.07 : 프로젝트 시작
-
-
-# 🧨 Trouble Shooting
-
----
-dddd
-- 
