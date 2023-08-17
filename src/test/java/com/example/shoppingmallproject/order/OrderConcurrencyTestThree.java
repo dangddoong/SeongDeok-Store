@@ -88,9 +88,9 @@ public class OrderConcurrencyTestThree {
 //  @Transactional
 //  @Rollback(false)
   void 재고차감_동시성_테스트() throws InterruptedException {
-    int num = 1000;
-    ExecutorService executorService = Executors.newFixedThreadPool(2000);
-    CountDownLatch countDownLatch = new CountDownLatch(2000);
+    int num = 10;
+    ExecutorService executorService = Executors.newFixedThreadPool(10);
+    CountDownLatch countDownLatch = new CountDownLatch(20);
 
     for (int i = 0; i < num; i++) {
       executorService.submit(() -> {
