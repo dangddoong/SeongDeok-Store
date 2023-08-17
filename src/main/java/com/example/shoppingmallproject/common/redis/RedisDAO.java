@@ -27,6 +27,10 @@ public class RedisDAO {
         this.objectMapper = objectMapper;
     }
 
+    public boolean setIfAbsent(String key, String value, Duration duration){
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        return Boolean.TRUE.equals(values.setIfAbsent(key, value, duration));
+    }
     public void simpleSetValue(String key, String value, Duration duration) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         values.set(key, value, duration);
