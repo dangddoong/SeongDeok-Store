@@ -22,10 +22,10 @@ public class OrderFacade {
   private final RedisDAO redisDAO;
 
   public Long createOrderWithDistributedLock(OrderRequestDto dto, User user) {
+    checkDuplicateRequest("createOrder" + user.getId() + dto.getProductIds().toString());
     List<RLock> locks = getRLocks(dto);
     try {
       tryRLocks(locks);
-      checkDuplicateRequest(user.getId(), "createOrder");
       return orderService.createOrder(dto, user);
     } catch (InterruptedException e) {
       throw new RuntimeException(e); // Custom Exception을 만들어서 던져주면 더 좋겠지유
@@ -34,10 +34,7 @@ public class OrderFacade {
     }
   }
 
-  // methodName + userId를 중복요청 검증 키값으로 사용하기 위해서, 두 값을 인자로 받아와서 합쳐주고 있습니다.
-  // String duplicateCheckKey를 인자로 받는다면, 분명 누군가는 정책과 다른 key값을 만들어서 넣어줄 것이기에..
-  private void checkDuplicateRequest(Long userId, String methodName) {
-    String duplicateCheckKey = methodName + userId;
+  private void checkDuplicateRequest(String duplicateCheckKey) {
     boolean isUniqueRequest = redisDAO.setIfAbsent(duplicateCheckKey, "value", Duration.ofMillis(10 * 1000L));
     if (!isUniqueRequest) throw new DuplicateRequestException(duplicateCheckKey);
   }
